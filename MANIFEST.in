@@ -1,0 +1,2 @@
+recursive-include ipyleaflet_htmllegend/static *.*
+include jupyter-leaflet-htmllegend.json
