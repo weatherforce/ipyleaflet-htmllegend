@@ -1,6 +1,7 @@
 var ipyleaflet = require('jupyter-leaflet');
 var _ = require('lodash');
 var L = require('leaflet');
+var htmlLegend = require('leaflet-html-legend');
 
 
 var HtmlLegendView = ipyleaflet.LeafletControlView.extend({
@@ -10,17 +11,13 @@ var HtmlLegendView = ipyleaflet.LeafletControlView.extend({
     },
     // Render the view.
     render: function() {
-        this.value_changed();
-        this.model.on("change:value", this.value_changed, this);
+        this.config_changed();
+        this.model.on("change:config", this.config_changed, this);
     },
-    value_changed: function() {
+    config_changed: function() {
         if (this.obj) this.obj.remove();
-        this.obj = L.control();
-        this.obj.onAdd = (function(map) {
-          var div = L.DomUtil.create('div', 'info')
-          div.innerHTML = this.model.get("value");
-          return div;
-        }).bind(this);
+        var config = this.model.get("config");
+        this.obj = L.control.htmllegend(config);
         this.obj.addTo(this.map_view.obj);
     }
 });
