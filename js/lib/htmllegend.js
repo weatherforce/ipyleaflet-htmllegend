@@ -17,16 +17,24 @@ var HtmlLegendView = ipyleaflet.LeafletControlView.extend({
     config_changed: function() {
         if (this.obj) this.obj.remove();
         var config = this.model.get("config");
-        var layerId = config.legends[0].layer.slice(10);
+        config.updateOpacity = function (layer, opacity) {
+            layer.setStyle({fillOpacity: opacity})
+        };
         var widgetManager = this.map_view.model.widget_manager;
         var htmlLegendView = this;
-        console.log("1) ******", config);
-        widgetManager.get_model(layerId).then(function(layer) {
-            layer.views[Object.keys(layer.views)[0]].then(function(view) {
-                config.legends[0].layer = view.obj;
-                console.log("2) ******", config);
-                htmlLegendView.obj = L.control.htmllegend(config);
-                htmlLegendView.obj.addTo(htmlLegendView.map_view.obj);
+        var conversionCount = 0;
+        config.legends.forEach(function(legend) {
+            var layerId = legend.layer.replace("IPY_MODEL_", "");
+            widgetManager.get_model(layerId).then(function(layer) {
+                var viewId = Object.keys(layer.views)[0];
+                layer.views[viewId].then(function(view) {
+                    legend.layer = view.obj;
+                    conversionCount++;
+                    if (conversionCount === config.legends.length) {
+                        htmlLegendView.obj = L.control.htmllegend(config);
+                        htmlLegendView.obj.addTo(htmlLegendView.map_view.obj);
+                    }
+                });
             });
         });
     }
