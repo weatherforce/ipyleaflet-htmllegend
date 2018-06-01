@@ -18,7 +18,7 @@ var HtmlLegendView = ipyleaflet.LeafletControlView.extend({
         if (this.obj) this.obj.remove();
         var config = this.model.get("config");
         config.updateOpacity = function (layer, opacity) {
-            layer.setStyle({fillOpacity: opacity})
+            layer.setStyle({opacity: opacity, fillOpacity: opacity});
         };
         this.deserializeLayers(config);
     },
