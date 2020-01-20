@@ -13,7 +13,7 @@ class HtmlLegend(DOMWidget):
     config = Dict(default_value={"legends": []}).tag(sync=True)
 
     def add_legend(self, legend):
-        self.config["legends"].append(legend)
+        self.config["legends"].append(to_json(legend, None))
         self.send_state()
 
     @validate("config")
